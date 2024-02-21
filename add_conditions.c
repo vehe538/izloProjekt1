@@ -20,11 +20,24 @@ void at_least_one_valid_street_for_each_step(CNF* formula, unsigned num_of_cross
     // ZDE PRIDAT KOD
     for (int i = 0; i < num_of_streets; i++){
 
-        Clause* cl = create_new_clause(formula);
-        add_literal_to_clause(cl, false, i, streets[i].crossroad_from, streets[i].crossroad_to);
+        
 
+        for (int z = 0; z < num_of_crossroads; z++){
+            for (int k = 0; k < num_of_crossroads; k++){
+
+                if (z == streets[i].crossroad_from && k == streets[i].crossroad_to){
+                    
+                    Clause* cl = create_new_clause(formula);
+                    add_literal_to_clause(cl, true, i, z, k); 
+
+                }
+
+            }
+
+        }   
 
     }
+
 }
 
 // Tato funkce by mela do formule pridat klauzule predstavujici podminku 2)
@@ -38,18 +51,17 @@ void at_most_one_street_for_each_step(CNF* formula, unsigned num_of_crossroads, 
     // ZDE PRIDAT KOD
     for (int i = 0; i < num_of_streets; i++){
 
+        int z = i;
+        int k = i+1;
+
         Clause *cl = create_new_clause(formula);
 
-        for (int z = 0; z < num_of_crossroads; z++){
-            for (int k = 0; k < num_of_crossroads; k++){
-
-                add_literal_to_clause(cl, false, i, z, k);
-            
-            }
-        }
+        add_literal_to_clause(cl, true, i, z, k);
 
 
     }
+
+    
 }
 
 // Tato funkce by mela do formule pridat klauzule predstavujici podminku 3)
@@ -61,6 +73,30 @@ void streets_connected(CNF* formula, unsigned num_of_crossroads, unsigned num_of
     assert(num_of_streets > 0);
 
     // ZDE PRIDAT KOD
+    for (int i = 0; i < num_of_streets; i++){
+
+
+        for (int z = 0; z < num_of_crossroads; z++){
+            for (int k = 0; k < num_of_crossroads; k++){
+
+                Clause *cl = create_new_clause(formula);
+                add_literal_to_clause(cl, false, i, z, k);
+
+                if (i > 0) {
+
+                    add_literal_to_clause(cl, true, i+1, k, k+1);
+
+
+                }
+
+
+            }
+        }
+
+
+    }
+
+    
 }
 
 // Tato funkce by mela do formule pridat klauzule predstavujici podminku 4)
