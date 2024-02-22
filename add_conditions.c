@@ -58,13 +58,12 @@ void at_most_one_street_for_each_step(CNF* formula, unsigned num_of_crossroads, 
         for (int z = 0; z < num_of_crossroads; z++){
             for (int k = 0; k < num_of_crossroads; k++){
 
-                if (z == i){
+                
+                Clause *cl = create_new_clause(formula);
+                add_literal_to_clause(cl, true, i, z, k);
+                add_literal_to_clause(cl, false, i, z, k);
 
-                    Clause *cl = create_new_clause(formula);
-                    add_literal_to_clause(cl, true, i, z, k);
-                    add_literal_to_clause(cl, false, i, z, k);
-
-                }
+                
 
             }
         }
@@ -94,25 +93,24 @@ void streets_connected(CNF* formula, unsigned num_of_crossroads, unsigned num_of
         
             for (int z = 0; z < num_of_crossroads; z++){
                 for (int k = 0; k < num_of_crossroads; k++){
-                    
-                    if (j == i+1){
 
-                        Clause *cl = create_new_clause(formula);    
+                    if (j == i+1){
+        
+                        Clause *cl = create_new_clause(formula);
                         add_literal_to_clause(cl, false, i, z, k);
-                    
 
                         for (int l = 0; l < num_of_crossroads; l++){
-
+                        
                             add_literal_to_clause(cl, true, j, k, l);
-                            add_literal_to_clause(cl, false, i, num_of_crossroads-1-l, num_of_crossroads-1-l);   
-
 
                         }
-                    
+                        
                     }
+
                 }
         
             }
+
         }
 
     }
