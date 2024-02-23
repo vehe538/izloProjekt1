@@ -30,10 +30,11 @@ void at_least_one_valid_street_for_each_step(CNF* formula, unsigned num_of_cross
 
                 if (z == streets[i].crossroad_from && k == streets[i].crossroad_to){
                     add_literal_to_clause(cl, true, i, z, k);
-
+                    
                 }
                 else {
                     add_literal_to_clause(cl, false, i, z, k);
+                    
                 }
 
             }
@@ -55,19 +56,25 @@ void at_most_one_street_for_each_step(CNF* formula, unsigned num_of_crossroads, 
     // ZDE PRIDAT KOD
     for (int i = 0; i < num_of_streets; i++){
         
-        for (int z = 0; z < num_of_crossroads; z++){
-            for (int k = 0; k < num_of_crossroads; k++){
+        Clause *cl = create_new_clause(formula);
 
-                
-                Clause *cl = create_new_clause(formula);
-                add_literal_to_clause(cl, true, i, z, k);
-                add_literal_to_clause(cl, false, i, z, k);
+        for (int j = 0; j < num_of_streets; j++){
 
-                
+            for (int z = 0; z < num_of_crossroads; z++){
+                for (int k = 0; k < num_of_crossroads; k++){
 
+                    if (z == k){
+                        add_literal_to_clause(cl, true, j, z, k);
+                        break;
+                    } else {
+                        add_literal_to_clause(cl, false, i, z, k);
+                        break;
+                    }
+
+                }
             }
-        }
 
+        }
     }
     
 
