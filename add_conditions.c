@@ -63,13 +63,8 @@ void at_most_one_street_for_each_step(CNF* formula, unsigned num_of_crossroads, 
             for (int z = 0; z < num_of_crossroads; z++){
                 for (int k = 0; k < num_of_crossroads; k++){
 
-                    if (z == k){
-                        add_literal_to_clause(cl, true, j, z, k);
-                        break;
-                    } else {
-                        add_literal_to_clause(cl, false, i, z, k);
-                        break;
-                    }
+                    add_literal_to_clause(cl, false, j, z, k);
+                    add_literal_to_clause(cl, true, i, z, k);
 
                 }
             }
