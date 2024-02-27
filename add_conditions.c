@@ -18,31 +18,32 @@ void at_least_one_valid_street_for_each_step(CNF* formula, unsigned num_of_cross
     assert(streets != NULL);
 
     // ZDE PRIDAT KOD
-    for (int i = 0; i < num_of_streets; i++){
-
-        
-
+    int i = 0;
+    while (i < num_of_streets){
+       
         for (int z = 0; z < num_of_crossroads; z++){
             for (int k = 0; k < num_of_crossroads; k++){
+
+                for (int j = 0; j < num_of_streets; j++){
+
+                    Clause *cl = create_new_clause(formula);
+
+                    if (streets[j].crossroad_from == z && streets[j].crossroad_to == k){
+                        
+                        add_literal_to_clause(cl, true, i, z, k);
+                        i++;
+
+                    } else {
+                        add_literal_to_clause(cl, true, i, z, k);
+                        add_literal_to_clause(cl, false, i, z, k);
+                        
+                    }
+
+                }
                 
-                Clause* cl = create_new_clause(formula);
-
-
-                if (z == streets[i].crossroad_from && k == streets[i].crossroad_to){
-                    add_literal_to_clause(cl, true, i, z, k);
-                    
-                }
-                else {
-                    add_literal_to_clause(cl, false, i, z, k);
-                    
-                }
-
             }
-
-        }   
-
+        }
     }
-
 }
 
 // Tato funkce by mela do formule pridat klauzule predstavujici podminku 2)
@@ -55,25 +56,27 @@ void at_most_one_street_for_each_step(CNF* formula, unsigned num_of_crossroads, 
 
     // ZDE PRIDAT KOD
     for (int i = 0; i < num_of_streets; i++){
-        
-        Clause *cl = create_new_clause(formula);
 
-        for (int j = 0; j < num_of_streets; j++){
 
-            for (int z = 0; z < num_of_crossroads; z++){
-                for (int k = 0; k < num_of_crossroads; k++){
+        for (int z = 0; z < num_of_crossroads; z++){
+            for (int k = 0; k < num_of_crossroads; k++){
 
-                    add_literal_to_clause(cl, false, j, z, k);
-                    add_literal_to_clause(cl, true, i, z, k);
+                for (int p = 0; p < num_of_crossroads; p++){
+                    for (int q = 0; q < num_of_crossroads; q++){
 
+
+                        if (z != p || k != q){
+
+                            Clause *cl = create_new_clause(formula);                            
+                            add_literal_to_clause(cl, false, i, z, k);
+                            add_literal_to_clause(cl, false, i, p, q);
+
+                        }
+                    }
                 }
             }
-
         }
     }
-    
-
-    
 }
 
     
@@ -92,32 +95,28 @@ void streets_connected(CNF* formula, unsigned num_of_crossroads, unsigned num_of
 
         for (int j = 0; j < num_of_streets; j++){
             
-        
-            for (int z = 0; z < num_of_crossroads; z++){
-                for (int k = 0; k < num_of_crossroads; k++){
+            if (j == i+1){
 
-                    if (j == i+1){
-        
-                        Clause *cl = create_new_clause(formula);
-                        add_literal_to_clause(cl, false, i, z, k);
+                for (int z = 0; z < num_of_crossroads; z++){
+                    for (int k = 0; k < num_of_crossroads; k++){
 
-                        for (int l = 0; l < num_of_crossroads; l++){
-                        
-                            add_literal_to_clause(cl, true, j, k, l);
-
+                        for (int p = 0; p < num_of_crossroads; p++){
+                            for (int q = 0; q < num_of_crossroads; q++){
+                                
+                                if (k != p){
+                                    Clause *cl = create_new_clause(formula);
+                                    add_literal_to_clause(cl, false, i, z, k);
+                                    add_literal_to_clause(cl, false, j, p, q);
+                                }
+                                
+                            }
                         }
-                        
                     }
-
                 }
-        
             }
-
         }
-
     }
 
-    
 }
 
 // Tato funkce by mela do formule pridat klauzule predstavujici podminku 4)
