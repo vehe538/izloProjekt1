@@ -24,23 +24,28 @@ void at_least_one_valid_street_for_each_step(CNF* formula, unsigned num_of_cross
         for (int z = 0; z < num_of_crossroads; z++){
             for (int k = 0; k < num_of_crossroads; k++){
 
-                for (int j = 0; j < num_of_streets; j++){
 
-                    Clause *cl = create_new_clause(formula);
+                for (int j = 0; j < num_of_streets; j++){
 
                     if (streets[j].crossroad_from == z && streets[j].crossroad_to == k){
                         
+                        Clause *cl = create_new_clause(formula);
                         add_literal_to_clause(cl, true, i, z, k);
+
+                        for (int q = 0; q < num_of_streets; q++){
+                            add_literal_to_clause(cl, true, q, z, k);
+                        }
                         i++;
+                        
 
                     } else {
-                        add_literal_to_clause(cl, true, i, z, k);
-                        add_literal_to_clause(cl, false, i, z, k);
+                        Clause *cl2 = create_new_clause(formula);
+                        add_literal_to_clause(cl2, true, i, z, k);
+                        add_literal_to_clause(cl2, false, i, z, k);
                         
                     }
 
                 }
-                
             }
         }
     }
@@ -104,12 +109,13 @@ void streets_connected(CNF* formula, unsigned num_of_crossroads, unsigned num_of
                             for (int q = 0; q < num_of_crossroads; q++){
                                 
                                 if (k != p){
+
                                     Clause *cl = create_new_clause(formula);
                                     add_literal_to_clause(cl, false, i, z, k);
                                     add_literal_to_clause(cl, false, j, p, q);
                                 }
-                                
-                            }
+                            }  
+                            
                         }
                     }
                 }
