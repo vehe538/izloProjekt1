@@ -18,36 +18,17 @@ void at_least_one_valid_street_for_each_step(CNF* formula, unsigned num_of_cross
     assert(streets != NULL);
 
     // ZDE PRIDAT KOD
-    int i = 0;
-    while (i < num_of_streets){
+    
+    for (int i = 0; i < num_of_streets; i++){
        
-        for (int z = 0; z < num_of_crossroads; z++){
-            for (int k = 0; k < num_of_crossroads; k++){
+        int z = streets[i].crossroad_from;
+        int k = streets[i].crossroad_to;
 
-
-                for (int j = 0; j < num_of_streets; j++){
-
-                    if (streets[j].crossroad_from == z && streets[j].crossroad_to == k){
-                        
-                        Clause *cl = create_new_clause(formula);
-                        add_literal_to_clause(cl, true, i, z, k);
-
-                        for (int q = 0; q < num_of_streets; q++){
-                            add_literal_to_clause(cl, true, q, z, k);
-                        }
-                        i++;
-                        
-
-                    } else {
-                        Clause *cl2 = create_new_clause(formula);
-                        add_literal_to_clause(cl2, true, i, z, k);
-                        add_literal_to_clause(cl2, false, i, z, k);
-                        
-                    }
-
-                }
-            }
-        }
+        Clause *cl = create_new_clause(formula);
+        for (int j = 0; j < num_of_streets; j++){   //ulice zo vstupu budu moct byt zvolene v ktoromkolvek kroku 
+            
+            add_literal_to_clause(cl, true, j, z, k);
+        }   
     }
 }
 
@@ -62,20 +43,18 @@ void at_most_one_street_for_each_step(CNF* formula, unsigned num_of_crossroads, 
     // ZDE PRIDAT KOD
     for (int i = 0; i < num_of_streets; i++){
 
-
         for (int z = 0; z < num_of_crossroads; z++){
             for (int k = 0; k < num_of_crossroads; k++){
 
                 for (int p = 0; p < num_of_crossroads; p++){
                     for (int q = 0; q < num_of_crossroads; q++){
 
-
-                        if (z != p || k != q){
-
-                            Clause *cl = create_new_clause(formula);                            
+                        if (z != p || k != q){   // "bude sa vyberat" z prave dvoch roznych ulic
+                            
+                            Clause *cl = create_new_clause(formula);
                             add_literal_to_clause(cl, false, i, z, k);
                             add_literal_to_clause(cl, false, i, p, q);
-
+                        
                         }
                     }
                 }
@@ -96,33 +75,27 @@ void streets_connected(CNF* formula, unsigned num_of_crossroads, unsigned num_of
     assert(num_of_streets > 0);
 
     // ZDE PRIDAT KOD
-    for (int i = 0; i < num_of_streets; i++){
+    for (int i = 0; i < num_of_streets-1; i++){
 
-        for (int j = 0; j < num_of_streets; j++){
-            
-            if (j == i+1){
+        
+        for (int z = 0; z < num_of_crossroads; z++){
+            for (int k = 0; k < num_of_crossroads; k++){
 
-                for (int z = 0; z < num_of_crossroads; z++){
-                    for (int k = 0; k < num_of_crossroads; k++){
+                for (int p = 0; p < num_of_crossroads; p++){
+                    for (int q = 0; q < num_of_crossroads; q++){
+                        
+                        if (k != p){    // pri prechadzani na novu ulicu budu 2 ulice false, ak na seba nenavazuju
 
-                        for (int p = 0; p < num_of_crossroads; p++){
-                            for (int q = 0; q < num_of_crossroads; q++){
-                                
-                                if (k != p){
-
-                                    Clause *cl = create_new_clause(formula);
-                                    add_literal_to_clause(cl, false, i, z, k);
-                                    add_literal_to_clause(cl, false, j, p, q);
-                                }
-                            }  
+                            Clause *cl = create_new_clause(formula);    
+                            add_literal_to_clause(cl, false, i, z, k);  
+                            add_literal_to_clause(cl, false, i+1, p, q);
                             
                         }
                     }
                 }
             }
-        }
+        }   
     }
-
 }
 
 // Tato funkce by mela do formule pridat klauzule predstavujici podminku 4)
